@@ -1,12 +1,47 @@
 import { Link } from 'react-router-dom';
-import { Rocket, Zap, Shield, ChevronRight, Calendar, ArrowBigDown, ArrowBigUp } from 'lucide-react';
-import { useState } from 'react';
+import { Rocket, Zap, Shield, ChevronRight, Calendar, ArrowBigDown, ArrowBigUp, ArrowBigUpIcon, ArrowUpSquareIcon, ArrowDownSquareIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { auth, db } from '../firebase'; 
+import { doc, getDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Home = () => {
     const [menu_colazione, setMenu_Colazione] = useState(true);
     const [menu_spuntino, setMenu_Spuntino] = useState(true);
     const [menu_pranzo, setMenu_Pranzo] = useState(true);
     const [menu_cena, setMenu_Cena] = useState(true);
+
+    const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // 1. Ascoltiamo se l'utente è loggato
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          // 2. Prendiamo il documento dell'utente usando il suo UID
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            setUserData(docSnap.data());
+          } else {
+            console.log("Nessun dato trovato per questo utente!");
+          }
+        } catch (error) {
+          console.error("Errore nel recupero dati:", error);
+        }
+      } else {
+        // Se non è loggato, potresti reindirizzarlo al login
+        console.log("Utente non loggato");
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) return <div className="p-10 text-center">Caricamento profilo...</div>;
 
     return (
         <div className="min-h-screen bg-white pb-24 ">
@@ -16,26 +51,26 @@ const Home = () => {
                     <img
                         src="https://randomuser.me/api/portraits/men/32.jpg"
                         alt="User Avatar"
-                        className="w-16 h-16 rounded-full border-2 border-gray-300 object-cover shadow-sm"
+                        className="w-16 h-16 rounded-full "
                     />
-                    <h1 className='text-2xl font-bold'>Ciao, Matteo Salvaggio</h1>
+                    <h1 className='text-2xl font-bold'>Ciao, {userData?.nome || "Utente"}! 👋</h1>
                     <h3 className='text-gray-500'>Giorno 0 dalla tua dieta</h3>
                 </div>
             </div>
 
 
-            <div className='m-10 flex items-center justify-between'>
+            {/* <div className='m-10 flex items-center justify-between'>
                 <h1 className='text-2xl font-bold'>Post Diario</h1>
                 <Calendar size={28} className="text-blue-500 group-hover:text-blue-700 transition-colors" />
 
-            </div>
+            </div> */}
 
             {/*Colazione*/}
             <div className='w-full'>
-                <div className=' bg-amber-500  flex items-center justify-between '>
-                    <h1 className='text-2xl font-bold'>Colazione</h1>
-                    {menu_colazione ? <ArrowBigUp onClick={() => setMenu_Colazione(!menu_colazione)} size={28} className="text-blue-500 group-hover:text-blue-700 transition-colors" />
-                        : <ArrowBigDown onClick={() => setMenu_Colazione(!menu_colazione)} size={28} className="text-blue-500 group-hover:text-blue-700 transition-colors" />}
+                <div className='  flex items-center justify-between '>
+                    <h1 className='text-2xl font-bold text-[#fe9a00]'>Colazione</h1>
+                    {menu_colazione ? <ArrowUpSquareIcon onClick={() => setMenu_Colazione(!menu_colazione)} size={28} className="text-[#fe9a00] group-hover:text-blue-700 transition-colors" />
+                        : <ArrowDownSquareIcon onClick={() => setMenu_Colazione(!menu_colazione)} size={28} className="text-[#fe9a00] group-hover:text-blue-700 transition-colors" />}
 
 
                 </div>
@@ -75,10 +110,10 @@ const Home = () => {
 
             {/*Spuntino*/}
             <div className='mt-5 w-full'>
-                <div className=' bg-amber-500  flex items-center justify-between '>
-                    <h1 className='text-2xl font-bold'>Spuntino</h1>
-                    {menu_spuntino ? <ArrowBigUp onClick={() => setMenu_Spuntino(!menu_spuntino)} size={28} className="text-blue-500 group-hover:text-blue-700 transition-colors" />
-                        : <ArrowBigDown onClick={() => setMenu_Spuntino(!menu_spuntino)} size={28} className="text-blue-500 group-hover:text-blue-700 transition-colors" />}
+                <div className='  flex items-center justify-between '>
+                    <h1 className='text-2xl font-bold text-[#fe9a00]'>Spuntino</h1>
+                    {menu_spuntino ? <ArrowUpSquareIcon onClick={() => setMenu_Spuntino(!menu_spuntino)} size={28} className="text-[#fe9a00] group-hover:text-blue-700 transition-colors" />
+                        : <ArrowDownSquareIcon onClick={() => setMenu_Spuntino(!menu_spuntino)} size={28} className="text-[#fe9a00] group-hover:text-blue-700 transition-colors" />}
 
 
                 </div>
@@ -119,10 +154,10 @@ const Home = () => {
 
             {/*Pranzo*/}
             <div className='w-full'>
-                <div className='mt-5 bg-amber-500  flex items-center justify-between '>
-                    <h1 className='text-2xl font-bold'>Pranzo</h1>
-                    {menu_pranzo ? <ArrowBigUp onClick={() => setMenu_Pranzo(!menu_pranzo)} size={28} className="text-blue-500 group-hover:text-blue-700 transition-colors" />
-                        : <ArrowBigDown onClick={() => setMenu_Pranzo(!menu_pranzo)} size={28} className="text-blue-500 group-hover:text-blue-700 transition-colors" />}
+                <div className='mt-5  flex items-center justify-between '>
+                    <h1 className='text-2xl font-bold text-[#fe9a00]'>Pranzo</h1>
+                    {menu_pranzo ? <ArrowUpSquareIcon onClick={() => setMenu_Pranzo(!menu_pranzo)} size={28} className="text-[#fe9a00] group-hover:text-blue-700 transition-colors" />
+                        : <ArrowDownSquareIcon onClick={() => setMenu_Pranzo(!menu_pranzo)} size={28} className="text-[#fe9a00] group-hover:text-blue-700 transition-colors" />}
 
 
                 </div>
@@ -163,10 +198,10 @@ const Home = () => {
             {/*Cena*/}
 
             <div className='w-full'>
-                <div className='mt-5 bg-amber-500  flex items-center justify-between '>
-                    <h1 className='text-2xl font-bold'>Cena</h1>
-                    {menu_cena ? <ArrowBigUp onClick={() => setMenu_Cena(!menu_cena)} size={28} className="text-blue-500 group-hover:text-blue-700 transition-colors" />
-                        : <ArrowBigDown onClick={() => setMenu_Cena(!menu_cena)} size={28} className="text-blue-500 group-hover:text-blue-700 transition-colors" />}
+                <div className='mt-5  flex items-center justify-between '>
+                    <h1 className='text-2xl font-bold text-[#fe9a00]'>Cena</h1>
+                    {menu_cena ? <ArrowUpSquareIcon onClick={() => setMenu_Cena(!menu_cena)} size={28} className="text-[#fe9a00] group-hover:text-blue-700 transition-colors" />
+                        : <ArrowDownSquareIcon onClick={() => setMenu_Cena(!menu_cena)} size={28} className="text-[#fe9a00] group-hover:text-blue-700 transition-colors" />}
 
 
                 </div>
