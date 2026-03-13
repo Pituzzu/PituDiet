@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import { Rocket, Zap, Shield, ChevronRight, Calendar, ArrowBigDown, ArrowBigUp, ArrowBigUpIcon, ArrowUpSquareIcon, ArrowDownSquareIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { auth, db } from '../firebase'; 
@@ -13,6 +13,7 @@ const Home = () => {
 
     const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // 1. Ascoltiamo se l'utente è loggato
@@ -34,6 +35,7 @@ const Home = () => {
       } else {
         // Se non è loggato, potresti reindirizzarlo al login
         console.log("Utente non loggato");
+        navigate("/login");
       }
       setLoading(false);
     });

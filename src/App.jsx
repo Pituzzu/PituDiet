@@ -8,8 +8,10 @@ import Login from "./pages/Login"; // <--- E QUESTO
 import Register from "./pages/Register"; // <--- E QUESTO
 import Navbar from "./components/Navbar";
 import Dieta from "./pages/Dieta";
+import Spesa from "./pages/Spesa";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Notifiche from "./pages/Notifiche";
 
 // 2. Definisci le rotte
 const router = createBrowserRouter([
@@ -30,8 +32,12 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/dieta", // Quando l'URL è "/dieta", Outlet diventa <Dieta />
+        path: "/dieta", // Quando l'URL è "/", Outlet diventa <Home />
         element: <Dieta />,
+      },
+      {
+        path: "/spesa", // Quando l'URL è "/dieta", Outlet diventa <Dieta />
+        element: <Spesa />,
       },
     ],
   },
